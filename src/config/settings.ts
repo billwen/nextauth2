@@ -1,17 +1,24 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import yaml from 'js-yaml';
-import { Setting, SettingSchema } from '@/config/SettingSchema'
+import { LoadedSetting, Setting, SettingSchema } from '@/config/SettingSchema'
 
 let _settings: Setting | undefined = undefined;
 
-const validateSetting = (setting: Setting) => {
-  const { uploading } = setting;
+const validateSetting = (loadedSetting: LoadedSetting): Setting => {
+  const { uploading } = loadedSetting;
 
   // Validate uploading
-  const tempFolderFullPath = path.resolve(process.cwd(), uploading.tempFolder);
-  if (!fs.existsSync(tempFolderFullPath)) {
-    fs.mkdirSync(tempFolderFullPath, { recursive: true });
+  const absTempFolder = path.resolve(process.cwd(), uploading.tempFolder);
+  if (!fs.existsSync(absTempFolder)) {
+    fs.mkdirSync(absTempFolder, { recursive: true });
+  }
+
+  return {
+    ...loadedSetting,
+    parsedSetting: {
+      absTempFolder,
+    }
   }
 }
 
@@ -31,9 +38,9 @@ const loadSettings = () => {
 
   try {
     const config = yaml.load(fs.readFileSync(fullPath, 'utf-8'));
-    _settings = SettingSchema.parse(config);
+    const loadedSetting = SettingSchema.parse(config);
 
-    validateSetting(_settings);
+    _settings = validateSetting(loadedSetting);
   } catch (err) {
     console.error(`Loading settings from ${fullPath} failed: ${err}`);
     throw err;
