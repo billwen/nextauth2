@@ -1,0 +1,4 @@
+uploading:
+  tempFolder: /uploading
+  allowedCatalog:
+    - testing

@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   experimental: {
-    instrumentationHook: true
+    instrumentationHook: true,
+    outputFileTracingIncludes: {
+      '/settings': ['./settings-*.yaml'],
+    },
   },
   reactStrictMode: true,
   swcMinify: true,

@@ -45,7 +45,9 @@ const loadSettings = () => {
     throw Error("No configuration file name provided, pls setup REACT_APP_SETTING_FILENAME environment variable");
   }
 
-  const fullPath = path.resolve(process.cwd(), fileName);
+  const fullFileName = `settings-${fileName}.yaml`;
+
+  const fullPath = path.resolve(process.cwd(), fullFileName);
   console.log(` Loading settings from ${fullPath}`);
 
   try {
